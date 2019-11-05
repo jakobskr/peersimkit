@@ -218,9 +218,9 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 				}
 				
 				if(cache.size() == size) {
-					for(int i = 0; i < cache.size(); i ++) {
-						if(cache.get(i).getSentTo() == message.getNode()) {
-							cache.set(i, e);
+					for(int j = 0; j < cache.size(); j ++) {
+						if(cache.get(j).getSentTo() == message.getNode()) {
+							cache.set(j, e);
 							break;
 						}
 					}

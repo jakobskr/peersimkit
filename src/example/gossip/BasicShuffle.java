@@ -172,7 +172,7 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 			if(this.waiting_for_response) {
 				System.out.println("rejecting a bitch lmao");
 				GossipMessage to_send = new GossipMessage(node, new ArrayList<Entry>());
-				message.setType(MessageType.SHUFFLE_REJECTED);
+				to_send.setType(MessageType.SHUFFLE_REJECTED);
 				Transport tr = (Transport) node.getProtocol(tid);
 				tr.send(node, message.getNode(), to_send, pid);
 				return;
@@ -203,7 +203,7 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 			subset.add(new Entry(node));
 		//	  3. Q reply P's shuffle request by sending back its own subset;
 			GossipMessage messageRepl = new GossipMessage(node, subset);
-			message.setType(MessageType.SHUFFLE_REPLY);
+			messageRepl.setType(MessageType.SHUFFLE_REPLY);
 			Transport tr = (Transport) node.getProtocol(tid);
 			tr.send(node, p, messageRepl, pid);
 			System.out.println("message yeeted to the yeetospehere");

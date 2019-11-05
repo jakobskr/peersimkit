@@ -38,11 +38,11 @@ init.wire WireStar
 
 # This initializes the topology as a ring. Use should also use WireStar to
 # initialize it as a star.
-init.wire WireRingLattice
-{
-	protocol gossip
-	k 1
-}
+#init.wire WireRingLattice
+#{
+#	protocol gossip
+#	k 1
+#}
 
 init.sch CDScheduler
 {

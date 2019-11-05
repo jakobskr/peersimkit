@@ -5,9 +5,11 @@ import java.util.List;
 
 import peersim.cdsim.CDProtocol;
 import peersim.config.Configuration;
+import peersim.core.CommonState;
 import peersim.core.Linkable;
 import peersim.core.Node;
 import peersim.edsim.EDProtocol;
+import peersim.transport.Transport;
 
 
 /**
@@ -76,27 +78,58 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 	 */
 	@Override
 	public void nextCycle(Node node, int protocolID) {
+
+		System.out.println("beeb boob this a test");
 		// Implement the shuffling protocol using the following steps (or
 		// you can design a similar algorithm):
 		// Let's name this node as P
 		
 		// 1. If P is waiting for a response from a shuffling operation initiated in a previous cycle, return;
-		// 2. If P's cache is empty, return;		
+
+		
+		// 2. If P's cache is empty, return;	
+		if(cache.size() == 0) {
+			return;
+		}
+		
 		// 3. Select a random neighbor (named Q) from P's cache to initiate the shuffling;
 		//	  - You should use the simulator's common random source to produce a random number: CommonState.r.nextInt(cache.size())
+		int qnum = CommonState.r.nextInt(cache.size());
+		Node q = cache.get(qnum).getNode();
+		
 		// 4. If P's cache is full, remove Q from the cache;
+		if(cache.size() == size) {
+			cache.remove(qnum);
+		}
+		
 		// 5. Select a subset of other l - 1 random neighbors from P's cache;
 		//	  - l is the length of the shuffle exchange
 		//    - Do not add Q to this subset	
+		int subsetSize = l;
+		Entry selected = null;
+		if(l > cache.size()) {
+			subsetSize= cache.size();
+		}
+		ArrayList<Entry> subset = new ArrayList<Entry>(subsetSize);
+		while(subset.size()<subsetSize) {
+			selected = cache.get(CommonState.r.nextInt(cache.size()));
+			if(selected.getNode() == q) {
+				continue;
+			}
+			subset.add(selected);
+		}
+		
 		// 6. Add P to the subset;
+		subset.add(selected);
+		
 		// 7. Send a shuffle request to Q containing the subset;
 		//	  - Keep track of the nodes sent to Q
 		//	  - Example code for sending a message:
 		//
-		// GossipMessage message = new GossipMessage(node, subset);
-		// message.setType(MessageType.SHUFFLE_REQUEST);
-		// Transport tr = (Transport) node.getProtocol(tid);
-		// tr.send(node, Q.getNode(), message, protocolID);
+		GossipMessage message = new GossipMessage(node, subset);
+		message.setType(MessageType.SHUFFLE_REQUEST);
+		Transport tr = (Transport) node.getProtocol(tid);
+		tr.send(node, q, message, protocolID);
 		//
 		// 8. From this point on P is waiting for Q's response and will not initiate a new shuffle operation;
 		//

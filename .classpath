@@ -8,5 +8,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="lib" path="jep-2.3.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="djep-1.0.0.jar"/>
+	<classpathentry kind="lib" path="src/jep-2.3.0.jar"/>
+	<classpathentry kind="lib" path="src/djep-1.0.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

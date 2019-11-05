@@ -34,11 +34,9 @@ protocol.gossip example.gossip.BasicShuffle
 init.wire WireStar
 {
 	protocol gossip
-	k 30
 }
 
 # This initializes the topology as a ring. Use should also use WireStar to
-# initialize it as a star.
 
 init.sch CDScheduler
 {

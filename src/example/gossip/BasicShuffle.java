@@ -11,10 +11,8 @@ import peersim.core.Node;
 import peersim.core.Protocol;
 import peersim.edsim.EDProtocol;
 import peersim.transport.Transport;
-<<<<<<< HEAD
-=======
+
 import peersim.transport.UniformRandomTransport;
->>>>>>> 0f5d3d59bbe484212f4bdcbef0a466f09bed2570
 
 
 /**
@@ -85,14 +83,7 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 	 */
 	@Override
 	public void nextCycle(Node node, int protocolID) {
-<<<<<<< HEAD
 
-		System.out.println("beeb boob this a test");
-=======
-		
-		
-		
->>>>>>> 0f5d3d59bbe484212f4bdcbef0a466f09bed2570
 		// Implement the shuffling protocol using the following steps (or
 		// you can design a similar algorithm):
 		// Let's name this node as P

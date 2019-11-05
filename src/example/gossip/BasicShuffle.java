@@ -110,13 +110,18 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 		int subsetSize = l;
 		Entry selected = null;
 		if(l > cache.size()) {
-			subsetSize= cache.size()-1;
+			subsetSize= cache.size();
 		}
 		ArrayList<Entry> subset = new ArrayList<Entry>(subsetSize);
 		while(subset.size()<subsetSize) {
+			if (cache.size() == 0) {
+				break;
+			}
+			System.out.println("doh");
 			int sel = CommonState.r.nextInt(cache.size());
 			selected = cache.get(sel);
 			if(selected.getNode() == q || subset.contains(selected)) {
+				subsetSize = subsetSize-1;
 				continue;
 			}
 			cache.get(sel).setSentTo(q);
@@ -124,7 +129,7 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 		}
 		
 		// 6. Add P to the subset;
-		subset.add(selected);
+		subset.add(new Entry(node));
 		
 		// 7. Send a shuffle request to Q containing the subset;
 		//	  - Keep track of the nodes sent to Q
@@ -181,13 +186,19 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 				subsetSize= cache.size();
 			}
 			ArrayList<Entry> subset = new ArrayList<Entry>(subsetSize);
-			while(subset.size()<subsetSize) {
+			while(subset.size()<=subsetSize) {
+				if(cache.size() == 0) {
+					break;
+				}
+				System.out.println("hod");
 				selected = cache.get(CommonState.r.nextInt(cache.size()));
 				if(selected.getNode() == p || subset.contains(selected)) {
+					subsetSize = subsetSize-1;
 					continue;
 				}
 				subset.add(selected);
 			}
+			subset.add(new Entry(node));
 		//	  3. Q reply P's shuffle request by sending back its own subset;
 			GossipMessage messageRepl = new GossipMessage(node, subset);
 			message.setType(MessageType.SHUFFLE_REPLY);
@@ -202,7 +213,14 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 			int i = 0;
 			for(Entry e: message.getShuffleList()) {
 				if(! (cache.contains(e) && (! subset.contains(e))) || ( ! cache.contains(e))) {
-					cache.set(cache.indexOf(subset.get(i)),e);
+					if(cache.size() == l) {
+						System.out.println(cache.indexOf(subset.get(i)) + " subset" + subset.size() + " cache:" + cache.size() + " l " + l);
+						
+						cache.set(cache.indexOf(subset.get(i)),e);
+					}
+					else {
+						cache.add(e);
+					}
 					i++;
 				}
 			}

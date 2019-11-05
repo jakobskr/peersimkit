@@ -171,11 +171,38 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 			}
 			
 		//	  2. Q selects a random subset of size l of its ownownownownownownownownownown neighbors; 
+			Node p = message.getNode();
+			int subsetSize = l;
+			Entry selected = null;
+			if(l > cache.size()) {
+				subsetSize= cache.size();
+			}
+			ArrayList<Entry> subset = new ArrayList<Entry>(subsetSize);
+			while(subset.size()<subsetSize) {
+				selected = cache.get(CommonState.r.nextInt(cache.size()));
+				if(selected.getNode() == p || subset.contains(selected)) {
+					continue;
+				}
+				subset.add(selected);
+			}
 		//	  3. Q reply P's shuffle request by sending back its own subset;
+			GossipMessage messageRepl = new GossipMessage(node, subset);
+			message.setType(MessageType.SHUFFLE_REPLY);
+			Transport tr = (Transport) node.getProtocol(tid);
+			tr.send(node, p, messageRepl, pid);
+			System.out.println("message yeeted to the yeetospehere");
+			waiting_for_response = false;
 		//	  4. Q updates its cache to include the neighbors sent by P:
 		//		 - No neighbor appears twice in the cache
 		//		 - Use empty cache slots to add the new entries
 		//		 - If the cache is full, you can replace entries among the ones sent to P with the new ones
+			int i = 0;
+			for(Entry e: message.getShuffleList()) {
+				if(! (cache.contains(e) && (! subset.contains(e))) || ( ! cache.contains(e))) {
+					cache.set(cache.indexOf(subset.get(i)),e);
+					i++;
+				}
+			}
 			break;
 		
 		// If the message is a shuffle reply:

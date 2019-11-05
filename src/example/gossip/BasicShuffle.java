@@ -136,7 +136,7 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 
 		tr.send(node, q, message, protocolID);
 		waiting_for_response = true;
-		System.out.println("eewew");
+		//System.out.println("eewew");
 		//
 		// 8. From this point on P is waiting for Q's response and will not initiate a new shuffle operation;
 		//
@@ -180,8 +180,9 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 			if(l > cache.size()) {
 				subsetSize= cache.size();
 			}
+			
 			ArrayList<Entry> subset = new ArrayList<Entry>(subsetSize);
-			while(subset.size()<subsetSize) {
+			while(subset.size() < subsetSize) {
 				selected = cache.get(CommonState.r.nextInt(cache.size()));
 				if(selected.getNode() == p || subset.contains(selected)) {
 					continue;
@@ -206,6 +207,7 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 					i++;
 				}
 			}
+			
 			break;
 		
 		// If the message is a shuffle reply:
@@ -217,7 +219,7 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 					continue;
 				}
 				
-				if(cache.size() == size) {
+				else if(cache.size() == size) {
 					for(int j = 0; j < cache.size(); j ++) {
 						if(cache.get(j).getSentTo() == message.getNode()) {
 							cache.set(j, e);

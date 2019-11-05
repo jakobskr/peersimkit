@@ -7,7 +7,10 @@ import peersim.cdsim.CDProtocol;
 import peersim.config.Configuration;
 import peersim.core.Linkable;
 import peersim.core.Node;
+import peersim.core.Protocol;
 import peersim.edsim.EDProtocol;
+import peersim.transport.Transport;
+import peersim.transport.UniformRandomTransport;
 
 
 /**
@@ -50,6 +53,8 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 	// The maximum length of the shuffle exchange;
 	private final int l;
 	
+	private boolean waiting_for_response = false;
+	
 	/**
 	 * Constructor that initializes the relevant simulation parameters and
 	 * other class variables.
@@ -76,6 +81,9 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 	 */
 	@Override
 	public void nextCycle(Node node, int protocolID) {
+		
+		
+		
 		// Implement the shuffling protocol using the following steps (or
 		// you can design a similar algorithm):
 		// Let's name this node as P
@@ -121,8 +129,15 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 		switch (message.getType()) {
 		// If the message is a shuffle request:
 		case SHUFFLE_REQUEST:
+			if(waiting_for_response) {
+				GossipMessage to_send = new GossipMessage(node, new ArrayList<Entry>());
+				message.setType(MessageType.SHUFFLE_REQUEST);
+				Transport tr = (Transport) node.getProtocol(tid);
+				tr.send(node, message.getNode(), to_send, pid);
+				return;
+			}
 		//	  1. If Q is waiting for a response from a shuffling initiated in a previous cycle, send back to P a message rejecting the shuffle request; 
-		//	  2. Q selects a random subset of size l of its own neighbors; 
+		//	  2. Q selects a random subset of size l of its ownownownownownownownownownown neighbors; 
 		//	  3. Q reply P's shuffle request by sending back its own subset;
 		//	  4. Q updates its cache to include the neighbors sent by P:
 		//		 - No neighbor appears twice in the cache
@@ -142,8 +157,18 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 		
 		// If the message is a shuffle rejection:
 		case SHUFFLE_REJECTED:
+			System.out.println("im cryeing");
+			
 		//	  1. If P was originally removed from Q's cache, add it again to the cache.
 		//	  2. Q is no longer waiting for a shuffle reply;
+			if(!contains(message.getNode())) {
+				cache.add(new Entry(message.getNode()));
+			}
+			
+			for(Entry e: cache) {
+				e.setSentTo(null);
+			}
+			waiting_for_response = false;
 			break;
 			
 		default:
@@ -166,6 +191,7 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 
 	@Override
 	public boolean addNeighbor(Node neighbour) {
+		System.out.println("added a neighbour: " + neighbour);
 		if (contains(neighbour))
 			return false;
 

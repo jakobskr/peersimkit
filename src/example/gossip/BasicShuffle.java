@@ -112,12 +112,12 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 		int subsetSize = l;
 		Entry selected = null;
 		if(l > cache.size()) {
-			subsetSize= cache.size();
+			subsetSize= cache.size()-1;
 		}
 		ArrayList<Entry> subset = new ArrayList<Entry>(subsetSize);
 		while(subset.size()<subsetSize) {
 			selected = cache.get(CommonState.r.nextInt(cache.size()));
-			if(selected.getNode() == q) {
+			if(selected.getNode() == q || subset.contains(selected)) {
 				continue;
 			}
 			subset.add(selected);
@@ -159,6 +159,8 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 		
 		switch (message.getType()) {
 		// If the message is a shuffle request:
+		//	  1. If Q is waiting for a response from a shuffling initiated in a previous cycle, send back to P a message rejecting the shuffle request;			
+
 		case SHUFFLE_REQUEST:
 			if(waiting_for_response) {
 				GossipMessage to_send = new GossipMessage(node, new ArrayList<Entry>());
@@ -168,8 +170,6 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 				return;
 			}
 			
-			System.out.println("ya yeet ya fool");
-		//	  1. If Q is waiting for a response from a shuffling initiated in a previous cycle, send back to P a message rejecting the shuffle request; 
 		//	  2. Q selects a random subset of size l of its ownownownownownownownownownown neighbors; 
 		//	  3. Q reply P's shuffle request by sending back its own subset;
 		//	  4. Q updates its cache to include the neighbors sent by P:

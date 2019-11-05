@@ -83,7 +83,7 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 	 */
 	@Override
 	public void nextCycle(Node node, int protocolID) {
-
+		System.out.println("meees");
 		// Implement the shuffling protocol using the following steps (or
 		// you can design a similar algorithm):
 		// Let's name this node as P
@@ -134,6 +134,8 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 		message.setType(MessageType.SHUFFLE_REQUEST);
 		Transport tr = (Transport) node.getProtocol(tid);
 		tr.send(node, q, message, protocolID);
+		System.out.println("message yeeted to the yeetospehere");
+		waiting_for_response = true;
 		//
 		// 8. From this point on P is waiting for Q's response and will not initiate a new shuffle operation;
 		//
@@ -165,6 +167,8 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 				tr.send(node, message.getNode(), to_send, pid);
 				return;
 			}
+			
+			System.out.println("ya yeet ya fool");
 		//	  1. If Q is waiting for a response from a shuffling initiated in a previous cycle, send back to P a message rejecting the shuffle request; 
 		//	  2. Q selects a random subset of size l of its ownownownownownownownownownown neighbors; 
 		//	  3. Q reply P's shuffle request by sending back its own subset;

@@ -31,10 +31,17 @@ protocol.gossip example.gossip.BasicShuffle
 	period CYCLE
 }
 
-init.wire WireStar
+#init.wire WireStar
+#{
+#	protocol gossip
+#}
+
+init.wire WireRingLattice
 {
 	protocol gossip
+	k 1
 }
+
 
 # This initializes the topology as a ring. Use should also use WireStar to
 

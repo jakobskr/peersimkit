@@ -98,7 +98,6 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 		// 2. If P's cache is empty, return;	
 		if(cache.size() == 0) return;
 		
-		System.out.println("is this number growing? " + cache.size());
 		
 		// 3. Select a random neighbor (named Q) from P's cache to initiate the shuffling;
 		//	  - You should use the simulator's common random source to produce a random number: CommonState.r.nextInt(cache.size())
@@ -183,7 +182,6 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 		case SHUFFLE_REQUEST:
 			
 			if(this.waiting_for_response) {
-				System.out.println("rejecting a bitch lmao");
 				GossipMessage to_send = new GossipMessage(node, new ArrayList<Entry>());
 				to_send.setType(MessageType.SHUFFLE_REJECTED);
 				Transport tr = (Transport) node.getProtocol(tid);
@@ -203,14 +201,10 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 			tempCache = new ArrayList<Entry>(cache);
 
 			while(subset.size()<subsetSize && tempCache.size() > 0) {
-				if (cache.size() == 0) {
-					break;
-				}
 				
 				int sel = CommonState.r.nextInt(tempCache.size());
 				selected = tempCache.remove(sel);
 				if(selected.getNode() == p || subset.contains(selected)) {
-					subsetSize = subsetSize-1;
 					continue;
 				}
 				selected.setSentTo(p);
@@ -245,7 +239,6 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 			messageRepl.setType(MessageType.SHUFFLE_REPLY);
 			Transport tr = (Transport) node.getProtocol(tid);
 			tr.send(node, p, messageRepl, pid);
-			System.out.println("message yeeted to the yeetospehere");
 			waiting_for_response = false;
 		//	  4. Q updates its cache to include the neighbors sent by P:
 		//		 - No neighbor appears twice in the cache
@@ -309,7 +302,6 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 		
 		// If the message is a shuffle rejection:
 		case SHUFFLE_REJECTED:
-			System.out.println("im cryeing");
 			
 		//	  1. If P was originally removed from Q's cache, add it again to the cache.
 		//	  2. Q is no longer waiting for a shuffle reply;
@@ -343,7 +335,6 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 
 	@Override
 	public boolean addNeighbor(Node neighbour) {
-		System.out.println("added a neighbour: " + neighbour);
 		if (contains(neighbour))
 			return false;
 

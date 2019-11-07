@@ -58,7 +58,7 @@ control.graphPL GraphStats
 	step CYCLE
 	undir true
 	# nl will produce path length information
-	nl 10
+	#nl 10
 	# uncomment the next line to produce clustering information
-	#nc 1000
+	nc 1000
 }

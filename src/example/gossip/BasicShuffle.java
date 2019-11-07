@@ -108,23 +108,15 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 		tempCache = new ArrayList<Entry>(cache);
 		if(cache.size() == size) {
 			cache.remove(qnum);
+			tempCache.remove(qnum);
 		}
-		tempCache.remove(qnum);
-
-		
-		
 		
 		// 5. Select a subset of other l - 1 random neighbors from P's cache;
 		//	  - l is the length of the shuffle exchange
 		//    - Do not add Q to this subset	
-		int subsetSize = l;
+		int subsetSize = l - 1;
 		Entry selected = null;
-		if(l > cache.size()) {
-			subsetSize= cache.size();
-		}
-		if(cache.contains(q)) {
-			subsetSize = subsetSize-1;
-		}
+	
 		ArrayList<Entry> subset = new ArrayList<Entry>(subsetSize);
 		while(subset.size()<subsetSize && tempCache.size() > 0) {
 			if (cache.size() == 0) {
@@ -132,10 +124,9 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 			}
 			int sel = CommonState.r.nextInt(tempCache.size());
 			selected = tempCache.remove(sel);
-			/*if(selected.getNode() == q || subset.contains(selected)) {
-				subsetSize = subsetSize-1;
+			if(selected.getNode() == q || subset.contains(selected)) {
 				continue;
-			}*/
+			}
 			selected.setSentTo(q);
 			subset.add(selected);
 		}
@@ -193,9 +184,7 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 			Node p = message.getNode();
 			int subsetSize = l;
 			Entry selected = null;
-			if(l > cache.size()) {
-				subsetSize= cache.size();
-			}
+			
 			
 			ArrayList<Entry> subset = new ArrayList<Entry>(subsetSize);
 			tempCache = new ArrayList<Entry>(cache);
@@ -210,30 +199,8 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 				selected.setSentTo(p);
 				subset.add(selected);
 			}
+						
 			
-			/*if(cache.size() <= l - 1) {
-				for (Entry e: cache) {
-					if (e.getNode() == p) continue;
-					
-					subset.add(e);
-					e.setSentTo(p);
-				}
-			}
-			
-			else {
-				while(subset.size()< l - 1) {
-					int sel = CommonState.r.nextInt(cache.size());
-					selected = cache.get(sel);
-					if(selected.getNode() == p || subset.contains(selected)) {
-						continue;
-					}
-					cache.get(sel).setSentTo(p);
-					subset.add(selected);
-				}
-			}*/
-				
-			
-			subset.add(new Entry(node));
 		//	  3. Q reply P's shuffle request by sending back its own subset;
 			GossipMessage messageRepl = new GossipMessage(node, subset);
 			messageRepl.setType(MessageType.SHUFFLE_REPLY);

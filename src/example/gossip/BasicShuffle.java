@@ -127,8 +127,8 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 			if(selected.getNode() == q || subset.contains(selected)) {
 				continue;
 			}
-			selected.setSentTo(q);
 			subset.add(selected);
+			selected.setSentTo(q);
 		}
 		
 		// 6. Add P to the subset;
@@ -238,15 +238,17 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 		case SHUFFLE_REPLY:
 		//	  1. In this case Q initiated a shuffle with P and is receiving a response containing a subset of P's neighbors
 		//	  2. Q updates its cache to include the neighbors sent by P:
+			int j = 0;
 			for(Entry e: message.getShuffleList()) {
 				if(cache.contains(e)) {
 					continue;
 				}
 				
 				else if(cache.size() == size) {
-					for(int j = 0; j < cache.size(); j ++) {
+					for(; j < cache.size(); j ++) {
 						if(cache.get(j).getSentTo() == message.getNode()) {
 							cache.set(j, e);
+							cache.get(j).setSentTo(null);
 							break;
 						}
 					}

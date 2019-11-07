@@ -111,6 +111,10 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 			tempCache.remove(qnum);
 		}
 		
+		if(cache.size() > size){
+			throw new RuntimeException("cry is free");
+		}
+		
 		// 5. Select a subset of other l - 1 random neighbors from P's cache;
 		//	  - l is the length of the shuffle exchange
 		//    - Do not add Q to this subset	
@@ -118,7 +122,7 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 		Entry selected = null;
 	
 		ArrayList<Entry> subset = new ArrayList<Entry>(subsetSize);
-		while(subset.size()<subsetSize && tempCache.size() > 0) {
+		while(subset.size() <= subsetSize && tempCache.size() > 0) {
 			if (cache.size() == 0) {
 				break;
 			}
@@ -189,7 +193,7 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 			ArrayList<Entry> subset = new ArrayList<Entry>(subsetSize);
 			tempCache = new ArrayList<Entry>(cache);
 
-			while(subset.size()<subsetSize && tempCache.size() > 0) {
+			while(subset.size() <= subsetSize && tempCache.size() > 0) {
 				
 				int sel = CommonState.r.nextInt(tempCache.size());
 				selected = tempCache.remove(sel);

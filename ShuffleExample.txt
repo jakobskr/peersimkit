@@ -23,7 +23,7 @@ protocol.tr UniformRandomTransport
 protocol.gossip example.gossip.BasicShuffle
 {
 	# the cache size should be set to 30 and to 50.
-	cacheSize 30
+	cacheSize 50
 	shuffleLength 8
 
 	step CYCLE

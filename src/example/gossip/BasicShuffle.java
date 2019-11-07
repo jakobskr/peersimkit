@@ -106,9 +106,14 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 		Node q = cache.get(qnum).getNode();
 		
 		// 4. If P's cache is full, remove Q from the cache;
+		tempCache = new ArrayList<Entry>(cache);
 		if(cache.size() == size) {
 			cache.remove(qnum);
 		}
+		tempCache.remove(qnum);
+
+		
+		
 		
 		// 5. Select a subset of other l - 1 random neighbors from P's cache;
 		//	  - l is the length of the shuffle exchange
@@ -122,17 +127,17 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 			subsetSize = subsetSize-1;
 		}
 		ArrayList<Entry> subset = new ArrayList<Entry>(subsetSize);
-		while(subset.size()<subsetSize) {
+		while(subset.size()<subsetSize && tempCache.size() > 0) {
 			if (cache.size() == 0) {
 				break;
 			}
-			int sel = CommonState.r.nextInt(cache.size());
-			selected = cache.get(sel);
-			if(selected.getNode() == q || subset.contains(selected)) {
+			int sel = CommonState.r.nextInt(tempCache.size());
+			selected = tempCache.remove(sel);
+			/*if(selected.getNode() == q || subset.contains(selected)) {
 				subsetSize = subsetSize-1;
 				continue;
-			}
-			cache.get(sel).setSentTo(q);
+			}*/
+			selected.setSentTo(q);
 			subset.add(selected);
 		}
 		
@@ -195,7 +200,24 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 			}
 			
 			ArrayList<Entry> subset = new ArrayList<Entry>(subsetSize);
-			if(cache.size() <= l - 1) {
+			tempCache = new ArrayList<Entry>(cache);
+
+			while(subset.size()<subsetSize && tempCache.size() > 0) {
+				if (cache.size() == 0) {
+					break;
+				}
+				
+				int sel = CommonState.r.nextInt(tempCache.size());
+				selected = tempCache.remove(sel);
+				if(selected.getNode() == p || subset.contains(selected)) {
+					subsetSize = subsetSize-1;
+					continue;
+				}
+				selected.setSentTo(p);
+				subset.add(selected);
+			}
+			
+			/*if(cache.size() <= l - 1) {
 				for (Entry e: cache) {
 					if (e.getNode() == p) continue;
 					
@@ -214,7 +236,7 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 					cache.get(sel).setSentTo(p);
 					subset.add(selected);
 				}
-			}
+			}*/
 				
 			
 			subset.add(new Entry(node));

@@ -106,10 +106,9 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 		
 		// 4. If P's cache is full, remove Q from the cache;
 		tempCache = new ArrayList<Entry>(cache);
-		if(cache.size() == size) {
-			cache.remove(qnum);
-			tempCache.remove(qnum);
-		}
+		cache.remove(qnum);
+		tempCache.remove(qnum);
+		
 		
 		if(cache.size() > size){
 			throw new RuntimeException("cry is free");
@@ -122,7 +121,7 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 		Entry selected = null;
 	
 		ArrayList<Entry> subset = new ArrayList<Entry>(subsetSize);
-		while(subset.size() <= subsetSize && tempCache.size() > 0) {
+		while(subset.size() < subsetSize && tempCache.size() > 0) {
 			if (cache.size() == 0) {
 				break;
 			}
@@ -193,7 +192,7 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 			ArrayList<Entry> subset = new ArrayList<Entry>(subsetSize);
 			tempCache = new ArrayList<Entry>(cache);
 
-			while(subset.size() <= subsetSize && tempCache.size() > 0) {
+			while(subset.size() < subsetSize && tempCache.size() > 0) {
 				
 				int sel = CommonState.r.nextInt(tempCache.size());
 				selected = tempCache.remove(sel);
@@ -215,14 +214,19 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 		//		 - No neighbor appears twice in the cache
 		//		 - Use empty cache slots to add the new entries
 		//		 - If the cache is full, you can replace entries among the ones sent to P with the new ones
-			
+			int j = 0;
 			for(Entry e: message.getShuffleList()) {
+				Node test = e.getNode();
+				BasicShuffle bs = (BasicShuffle) test.getProtocol(pid);
+				
+				if(bs.contains(node)) continue;
+				
 				if(cache.contains(e)) {
 					continue;
 				}
 				
 				else if(cache.size() == size) {
-					for(int j = 0; j < cache.size(); j ++) {
+					for(; j < cache.size(); j ++) {
 						if(cache.get(j).getSentTo() == p) {
 							cache.set(j, e);
 							e.setSentTo(null);
@@ -242,8 +246,14 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 		case SHUFFLE_REPLY:
 		//	  1. In this case Q initiated a shuffle with P and is receiving a response containing a subset of P's neighbors
 		//	  2. Q updates its cache to include the neighbors sent by P:
-			int j = 0;
+			j = 0;
 			for(Entry e: message.getShuffleList()) {
+				Node test = e.getNode();
+				BasicShuffle bs = (BasicShuffle) test.getProtocol(pid);
+				
+				if(bs.contains(node)) continue;
+						
+				
 				if(cache.contains(e)) {
 					continue;
 				}

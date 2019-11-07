@@ -37,6 +37,6 @@ control.graphPL GraphStats
 	protocol gossip
 	step CYCLE
 	undir true
-	#nl 10
-	nc 1000
+	nl 10
+	#nc 1000
 }

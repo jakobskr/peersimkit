@@ -48,6 +48,8 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 
 	// The list of neighbors known by this node, or the cache.
 	private List<Entry> cache;
+	private List<Entry> tempCache;
+
 	
 	// The maximum size of the cache;
 	private final int size;
@@ -70,6 +72,8 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 		this.tid = Configuration.getPid(n + "." + PAR_TRANSPORT);
 		waiting_for_response = false;
 		cache = new ArrayList<Entry>(size);
+		tempCache = new ArrayList<Entry>(size);
+
 	}
 
 	/* START YOUR IMPLEMENTATION FROM HERE
@@ -111,6 +115,9 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 		Entry selected = null;
 		if(l > cache.size()) {
 			subsetSize= cache.size();
+		}
+		if(cache.contains(q)) {
+			subsetSize = subsetSize-1;
 		}
 		ArrayList<Entry> subset = new ArrayList<Entry>(subsetSize);
 		while(subset.size()<subsetSize) {

@@ -20,7 +20,7 @@ protocol.gossip IdleProtocol
 init.wire WireKOut
 {
 	protocol gossip
-	k 50
+	k 30
 }
 
 control.degree example.reports.InDegreeObserver

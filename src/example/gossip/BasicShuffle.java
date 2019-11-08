@@ -130,7 +130,7 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 			if(selected.getNode() == q || subset.contains(selected)) {
 				continue;
 			}
-			subset.add(selected);
+			subset.add(new Entry(selected.getNode()));
 			selected.setSentTo(q);
 		}
 		
@@ -200,7 +200,7 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 					continue;
 				}
 				selected.setSentTo(p);
-				subset.add(selected);
+				subset.add(new Entry(selected.getNode()));
 			}
 						
 			

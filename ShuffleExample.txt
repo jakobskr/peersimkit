@@ -23,7 +23,7 @@ protocol.tr UniformRandomTransport
 protocol.gossip example.gossip.BasicShuffle
 {
 	# the cache size should be set to 30 and to 50.
-	cacheSize 30
+	cacheSize 50
 	shuffleLength 8
 
 	step CYCLE
@@ -62,5 +62,5 @@ control.graphPL GraphStats
 	#nl will produce path length information
 	#nl 10
 	# uncomment the next line to produce clustering information
-	#nc 1000
+	nc 1000
 }

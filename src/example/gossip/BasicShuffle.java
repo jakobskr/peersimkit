@@ -106,9 +106,11 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 		
 		// 4. If P's cache is full, remove Q from the cache;
 		tempCache = new ArrayList<Entry>(cache);
-		cache.remove(qnum);
-		tempCache.remove(qnum);
 		
+		if(size == cache.size()) {
+			cache.remove(qnum);
+			tempCache.remove(qnum);
+		}
 		
 		if(cache.size() > size){
 			throw new RuntimeException("cry is free");
@@ -219,17 +221,17 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 				Node test = e.getNode();
 				BasicShuffle bs = (BasicShuffle) test.getProtocol(pid);
 				
-				if(bs.contains(node)) continue;
+				//if(bs.contains(node)) continue;
 				
 				if(cache.contains(e)) {
 					continue;
 				}
 				
 				else if(cache.size() == size) {
-					for(; j < cache.size(); j ++) {
+					for(j = 0; j < cache.size(); j ++) {
 						if(cache.get(j).getSentTo() == p) {
-							cache.set(j, e);
-							e.setSentTo(null);
+							cache.remove(j);
+							cache.add(e);
 							break;
 						}
 					}
@@ -251,7 +253,7 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 				Node test = e.getNode();
 				BasicShuffle bs = (BasicShuffle) test.getProtocol(pid);
 				
-				if(bs.contains(node)) continue;
+				//if(bs.contains(node)) continue;
 						
 				
 				if(cache.contains(e)) {
@@ -259,10 +261,11 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 				}
 				
 				else if(cache.size() == size) {
-					for(; j < cache.size(); j ++) {
+					for(j = 0; j < cache.size(); j ++) {
 						if(cache.get(j).getSentTo() == message.getNode()) {
-							cache.set(j, e);
-							cache.get(j).setSentTo(null);
+							cache.remove(j);
+							cache.add(e);
+							//cache.get(j).setSentTo(null);
 							break;
 						}
 					}
@@ -276,10 +279,7 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 		//		 - Use empty cache slots to add new entries
 		//		 - If the cache is full, you can replace entries among the ones originally sent to P with the new ones
 		//	  3. Q is no longer waiting for a shuffle reply;
-			for(Entry e: cache) {
-				e.setSentTo(null);
-			}
-			
+						
 			waiting_for_response = false;
 			break;
 		
@@ -292,9 +292,6 @@ public class BasicShuffle  implements Linkable, EDProtocol, CDProtocol{
 				cache.add(new Entry(message.getNode()));
 			}
 			
-			for(Entry e: cache) {
-				e.setSentTo(null);
-			}
 			waiting_for_response = false;
 			break;
 			
